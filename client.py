@@ -7,8 +7,12 @@ SERVER_PORT    = 12346
 clientsocket = socket.socket()
 
 clientsocket.connect((SERVER_ADDRESS,SERVER_PORT))
-
-clientsocket.recv
+message = input("choose your board size: ")
+clientsocket.send(message.encode())
 
 while True:
-    time.sleep(1)
+        data = clientsocket.recv(1024).decode()  # receive response
+
+        print('Received from server: ' + data)  # show in terminal
+        message = input(" -> ")  # again take input
+        clientsocket.send(message.encode())  #
