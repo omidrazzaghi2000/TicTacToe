@@ -48,7 +48,16 @@ def acceptClients():
         print(f"new Client with {address}")
 
 
-def handleClient(board_size, client_conn_array):
+def handleClient(board_size):
+    if(board_size == 3):
+        client_conn_array = client_conn_3x3_array
+
+    elif(board_size == 4):
+        client_conn_array = client_conn_4x4_array
+
+    elif(board_size == 5):
+        client_conn_array = client_conn_5x5_array
+    
 
     while True:
         while(len(client_conn_array) == 2):
@@ -67,8 +76,8 @@ def handleClient(board_size, client_conn_array):
 acceptClients_thread = threading.Thread(target=acceptClients,args=())
 acceptClients_thread.start()
 
-threading.Thread(handleClient(3,client_conn_3x3_array)).start()
-threading.Thread(handleClient(4,client_conn_4x4_array)).start()
-threading.Thread(handleClient(5,client_conn_5x5_array)).start()
+threading.Thread(handleClient(3)).start()
+threading.Thread(handleClient(4)).start()
+threading.Thread(handleClient(5)).start()
 
 acceptClients_thread.join()
