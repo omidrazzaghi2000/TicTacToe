@@ -26,16 +26,19 @@ def acceptClients():
 
         clientConnection,address = serverSocket.accept()
         
-        board_size = clientConnection.recv(4).decode()
+        board_size = int(clientConnection.recv(4).decode())
 
 
         if(board_size == 3):
+            print("board_size_3 one client added")
             client_conn_3x3_array.append(clientConnection)
 
         elif(board_size == 4):
+            print("board_size_4 one client added")
             client_conn_4x4_array.append(clientConnection)
 
         elif(board_size == 5):
+            print("board_size_5 one client added")
             client_conn_5x5_array.append(clientConnection)
 
 
