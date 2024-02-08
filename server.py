@@ -26,37 +26,56 @@ def acceptClients():
 
         clientConnection,address = serverSocket.accept()
         
-        board_size = int(clientConnection.recv(4).decode())
+        
 
+        while True:
 
-        if(board_size == 3):
-            print("board_size_3 one client added")
-            client_conn_3x3_array.append(clientConnection)
+            board_size = int(clientConnection.recv(4).decode())
 
-        elif(board_size == 4):
-            print("board_size_4 one client added")
-            client_conn_4x4_array.append(clientConnection)
+            if(board_size == 3):
+                
+                #check that game is on or off
+                if len(client_conn_3x3_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+                    
 
-        elif(board_size == 5):
-            print("board_size_5 one client added")
-            client_conn_5x5_array.append(clientConnection)
+                print("board_size_3 one client added")
+                client_conn_3x3_array.append(clientConnection)
+                clientConnection.send(b"Joined the game successfully")
+                break
 
+            elif(board_size == 4):
 
+                #check that game is on or off
+                if len(client_conn_4x4_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+
+                print("board_size_4 one client added")
+                client_conn_4x4_array.append(clientConnection) 
+                clientConnection.send(b"Joined the game successfully")
+                break
+
+            elif(board_size == 5):
+
+                #check that game is on or off
+                if len(client_conn_4x4_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+
+                print("board_size_5 one client added")
+                client_conn_5x5_array.append(clientConnection)
+                clientConnection.send(b"Joined the game successfully")
+                break
 
 
 
         print(f"new Client with {address}")
 
 
-def handleClient(board_size):
-    if(board_size == 3):
-        client_conn_array = client_conn_3x3_array
+def handleClient(board_size,client_conn_array):
 
-    elif(board_size == 4):
-        client_conn_array = client_conn_4x4_array
-
-    elif(board_size == 5):
-        client_conn_array = client_conn_5x5_array
     
 
     while True:
@@ -76,8 +95,8 @@ def handleClient(board_size):
 acceptClients_thread = threading.Thread(target=acceptClients,args=())
 acceptClients_thread.start()
 
-threading.Thread(handleClient(3)).start()
-threading.Thread(handleClient(4)).start()
-threading.Thread(handleClient(5)).start()
+threading.Thread(target=handleClient,args=(3,client_conn_3x3_array)).start()
+threading.Thread(target=handleClient,args=(4,client_conn_4x4_array)).start()
+threading.Thread(target=handleClient,args=(5,client_conn_5x5_array)).start()
 
 acceptClients_thread.join()
