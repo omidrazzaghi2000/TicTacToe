@@ -60,7 +60,7 @@ def acceptClients():
             elif(board_size == 5):
 
                 #check that game is on or off
-                if len(client_conn_4x4_array) == 2:
+                if len(client_conn_5x5_array) == 2:
                     clientConnection.send(b"You can not join to the game because this board is full")
                     continue
 
