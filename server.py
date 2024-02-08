@@ -13,6 +13,9 @@ def acceptClients():
     #define socket
     serverSocket = socket.socket()
 
+    #option
+    serverSocket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+
     #bind socket
     serverSocket.bind((ADDRESS,PORT))
 
