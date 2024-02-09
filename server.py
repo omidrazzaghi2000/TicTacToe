@@ -7,15 +7,15 @@ PORT_3X3    = 12346
 PORT_4X4    = 12347
 PORT_5X5    = 12348
 
-client_conn_array_3x3 = []
-client_conn_array_4x4 = []
-client_conn_array_5x5 = []
+client_conn_3x3_array = []
+client_conn_4x4_array = []
+client_conn_5x5_array = []
 
 def acceptClients(board_size):
     #define socket
     serverSocket = socket.socket()
 
-    #reuse address option
+    #option
     serverSocket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 
     #bind socket
@@ -35,41 +35,78 @@ def acceptClients(board_size):
         print(f"Waiting for new connection for board size : {board_size}")
 
         clientConnection,address = serverSocket.accept()
+        
+        
 
-        if(board_size == 3):
-            client_conn_array = client_conn_array_3x3
-        elif(board_size == 4):
-            client_conn_array = client_conn_array_4x4
-        elif(board_size == 5):
-            client_conn_array = client_conn_array_5x5
+        while True:
 
-        client_conn_array.append(clientConnection)
+            board_size = int(clientConnection.recv(4).decode())
 
-        while(len(client_conn_array) == 2):
-            
-            client_conn_array[0].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
-            
-            print(f"Player1 on board {board_size}x{board_size} said {client_conn_array[0].recv(1024).decode()}")
+            if(board_size == 3):
+                
+                #check that game is on or off
+                if len(client_conn_3x3_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+                    
 
-            client_conn_array[1].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
-            
-            print(f"Player2 on board {board_size}x{board_size} said {client_conn_array[1].recv(1024).decode()}")
+                print("board_size_3 one client added")
+                client_conn_3x3_array.append(clientConnection)
+                clientConnection.send(b"Joined the game successfully")
+                break
+
+            elif(board_size == 4):
+
+                #check that game is on or off
+                if len(client_conn_4x4_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+
+                print("board_size_4 one client added")
+                client_conn_4x4_array.append(clientConnection) 
+                clientConnection.send(b"Joined the game successfully")
+                break
+
+            elif(board_size == 5):
+
+                #check that game is on or off
+                if len(client_conn_5x5_array) == 2:
+                    clientConnection.send(b"You can not join to the game because this board is full")
+                    continue
+
+                print("board_size_5 one client added")
+                client_conn_5x5_array.append(clientConnection)
+                clientConnection.send(b"Joined the game successfully")
+                break
+
 
 
         print(f"new Client with {address}")
 
 
+def handleClient(board_size,client_conn_array):
+
+    
+
+    while True:
+        while(len(client_conn_array) == 2):
+            
+            client_conn_array[0].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
+            
+            print(f"Player1 on board {board_size}x{board_size} said {client_conn_array[0].recv(1024)}")
+
+            client_conn_array[1].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
+            
+            print(f"Player2 on board {board_size}x{board_size} said said f{client_conn_array[1].recv(1024)}")
+
+        time.sleep(0.01) 
 
 
-        
+acceptClients_thread = threading.Thread(target=acceptClients,args=())
+acceptClients_thread.start()
 
+threading.Thread(target=handleClient,args=(3,client_conn_3x3_array)).start()
+threading.Thread(target=handleClient,args=(4,client_conn_4x4_array)).start()
+threading.Thread(target=handleClient,args=(5,client_conn_5x5_array)).start()
 
-acceptClients3x3_thread = threading.Thread(target=acceptClients,args=(3,))
-acceptClients3x3_thread.start()
-acceptClients4x4_thread = threading.Thread(target=acceptClients,args=(4,))
-acceptClients4x4_thread.start()
-acceptClients5x5_thread = threading.Thread(target=acceptClients,args=(5,))
-acceptClients5x5_thread.start()
-acceptClients3x3_thread.join()
-acceptClients4x4_thread.join()
-acceptClients5x5_thread.join()
+acceptClients_thread.join()
