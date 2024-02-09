@@ -3,15 +3,13 @@ import threading
 import time
 
 ADDRESS = socket.gethostname()
-PORT_3X3    = 12346
-PORT_4X4    = 12347
-PORT_5X5    = 12348
+PORT    = 12346
 
 client_conn_3x3_array = []
 client_conn_4x4_array = []
 client_conn_5x5_array = []
 
-def acceptClients(board_size):
+def acceptClients():
     #define socket
     serverSocket = socket.socket()
 
@@ -19,12 +17,7 @@ def acceptClients(board_size):
     serverSocket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 
     #bind socket
-    if board_size == 3:
-        serverSocket.bind((ADDRESS,PORT_3X3))
-    elif board_size == 4:
-        serverSocket.bind((ADDRESS,PORT_4X4))
-    elif board_size == 5:
-        serverSocket.bind((ADDRESS,PORT_5X5))
+    serverSocket.bind((ADDRESS,PORT))
 
     #listen 
     serverSocket.listen(2)
@@ -32,7 +25,7 @@ def acceptClients(board_size):
     
     while True:
 
-        print(f"Waiting for new connection for board size : {board_size}")
+        print("Waiting for new connection ")
 
         clientConnection,address = serverSocket.accept()
         
