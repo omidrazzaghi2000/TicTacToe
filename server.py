@@ -80,17 +80,30 @@ def acceptClients():
 def handleClient(board_size,client_conn_array):
 
     
+    client_message = None
 
     while True:
         while(len(client_conn_array) == 2):
             
-            client_conn_array[0].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
-            
-            print(f"Player1 on board {board_size}x{board_size} said {client_conn_array[0].recv(1024)}")
+            if client_message == None: # it is the first time that server is in this loop
+                client_conn_array[0].send(f"None,None^It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
+            else:
+                row = client_message.split(",")[0]
+                col = client_message.split(",")[1]
+                client_conn_array[0].send(f"{row},{col}^It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
 
-            client_conn_array[1].send(f"It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
+            client_message = client_conn_array[0].recv(1024).decode()
             
-            print(f"Player2 on board {board_size}x{board_size} said said f{client_conn_array[1].recv(1024)}")
+            print(f"Player1 on board {board_size}x{board_size} said {client_message}")
+
+            row = client_message.split(",")[0]
+            col = client_message.split(",")[1]
+
+            client_conn_array[1].send(f"{row},{col}^It is your turn on board {board_size}x{board_size} ... say a cell number".encode())
+            
+            client_message = client_conn_array[1].recv(1024).decode()
+
+            print(f"Player2 on board {board_size}x{board_size} said said {client_message}")
 
         time.sleep(0.01) 
 
@@ -102,4 +115,5 @@ threading.Thread(target=handleClient,args=(3,client_conn_3x3_array)).start()
 threading.Thread(target=handleClient,args=(4,client_conn_4x4_array)).start()
 threading.Thread(target=handleClient,args=(5,client_conn_5x5_array)).start()
 
-acceptClients_thread.join()
+while True:
+    time.sleep(1)

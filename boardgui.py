@@ -6,7 +6,13 @@ class TicTacToe(QWidget):
         super().__init__()
         self.sock_client = sock_client
         self.n = n
+        self.isPicked = False #for blocking client socket code
+        self.current_selected_row = None #for sending to server
+        self.current_selected_col = None #for sending to server
         self.initUI()
+
+    def define_socket(self,sock):
+        self.sock_client = sock
 
     def initUI(self):
         self.setWindowTitle('Tic Tac Toe')
@@ -39,6 +45,8 @@ class TicTacToe(QWidget):
 
         self.show()
 
+
+
     def on_button_click(self, row, col):
         button = self.buttons[row][col]
 
@@ -50,6 +58,9 @@ class TicTacToe(QWidget):
                 self.reset_board()
             else:
                 self.current_player = 'O' if self.current_player == 'X' else 'X'
+        self.current_selected_row = row
+        self.current_selected_col = col
+        self.isPicked = True
 
     def check_winner(self):
         # Check rows
@@ -79,22 +90,21 @@ class TicTacToe(QWidget):
     def disable_user_action(self):
         for i in range(self.n):
             for j in range(self.n):
-                self.buttons[i][j].clicked.disconnect()
+                self.buttons[i][j].setEnabled(False)
 
     def enable_user_action(self):
         for i in range(self.n):
                 for j in range(self.n):
-                    self.buttons[i][j].clicked.connect(
-                        lambda _, row=i, col=j: self.on_button_click(row, col) 
-                    )
+                    self.buttons[i][j].setEnabled(True)
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    n = 4
+    n = 3
     boardWindow = TicTacToe(n)
 
     boardWindow.on_button_click(1,1)
 
     sys.exit(app.exec_())
+    
