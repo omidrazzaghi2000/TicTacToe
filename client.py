@@ -15,8 +15,8 @@ while(data=="You can not join to the game because this board is full" or message
  message = input("choose your board size: ")
  clientsocket.send(message.encode())
  data=clientsocket.recv(1024).decode()
- print(data)
 
+print(message)
 
 while True:
         data = clientsocket.recv(1024).decode()  # receive response

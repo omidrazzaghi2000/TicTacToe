@@ -1,10 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QLabel
 
 class TicTacToe(QWidget):
-    def __init__(self, n):
+    def __init__(self, n, sock_client=None):
         super().__init__()
-
+        self.sock_client = sock_client
         self.n = n
         self.initUI()
 
@@ -13,6 +13,10 @@ class TicTacToe(QWidget):
         self.setGeometry(100, 100, self.n * 100, self.n * 100)
 
         self.layout = QVBoxLayout()
+        
+        self.top_label_layout = QHBoxLayout()
+        self.top_label = QLabel("Hello")
+        self.top_label_layout.addWidget(self.top_label)
 
         self.gridLayout = QGridLayout()
         self.buttons = []
@@ -27,6 +31,7 @@ class TicTacToe(QWidget):
                 self.gridLayout.addWidget(button, i, j)
             self.buttons.append(row_buttons)
 
+        self.layout.addLayout(self.top_label_layout)
         self.layout.addLayout(self.gridLayout)
         self.setLayout(self.layout)
 
@@ -70,11 +75,26 @@ class TicTacToe(QWidget):
             for j in range(self.n):
                 self.buttons[i][j].setText('')
         self.current_player = 'X'
+    
+    def disable_user_action(self):
+        for i in range(self.n):
+            for j in range(self.n):
+                self.buttons[i][j].clicked.disconnect()
+
+    def enable_user_action(self):
+        for i in range(self.n):
+                for j in range(self.n):
+                    self.buttons[i][j].clicked.connect(
+                        lambda _, row=i, col=j: self.on_button_click(row, col) 
+                    )
+
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    n = 3  
+    n = 4
     boardWindow = TicTacToe(n)
+
+    boardWindow.on_button_click(1,1)
 
     sys.exit(app.exec_())
