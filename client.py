@@ -32,6 +32,7 @@ def run_application(n):
 threading.Thread(target=run_application,args=(int(message),)).start()
 while True:
         if(boardWindow != None):
+                #define board 
                 boardWindow:TicTacToe = boardWindow
                 boardWindow.top_label.setText("Wait for player")
 
@@ -56,9 +57,9 @@ while True:
                 
 
 
-                # wait for click on a cell on board 
+                # wait for click on a cell on the board 
                 while(not boardWindow.isPicked):
-                      time.sleep(0.5)
+                      time.sleep(0.5)#cpu usage
                 
                 boardWindow.disable_user_action()
 

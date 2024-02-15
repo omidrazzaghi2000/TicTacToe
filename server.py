@@ -13,7 +13,7 @@ def acceptClients():
     #define socket
     serverSocket = socket.socket()
 
-    #option
+    #option [Address already in used error]
     serverSocket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 
     #bind socket
@@ -115,5 +115,6 @@ threading.Thread(target=handleClient,args=(3,client_conn_3x3_array)).start()
 threading.Thread(target=handleClient,args=(4,client_conn_4x4_array)).start()
 threading.Thread(target=handleClient,args=(5,client_conn_5x5_array)).start()
 
+#for not finishing main thread
 while True:
     time.sleep(1)
